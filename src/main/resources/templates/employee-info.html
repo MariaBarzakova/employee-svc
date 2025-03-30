@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Employee Info</title>
+</head>
+<body>
+    <h2>Employee Information</h2>
+        <p><strong>ID:</strong> <span th:text="${employeeInfo.id}"></span></p>
+        <p><strong>Username:</strong> <span th:text="${employeeInfo.username}"></span></p>
+        <p><strong>Password:</strong> <span th:text="${employeeInfo.password}"></span></p>
+        <p><strong>First Name:</strong> <span th:text="${employeeInfo.firstName}"></span></p>
+        <p><strong>Last Name:</strong> <span th:text="${employeeInfo.lastName}"></span></p>
+</body>
+</html>
