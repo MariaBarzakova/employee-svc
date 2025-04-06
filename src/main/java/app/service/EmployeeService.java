@@ -5,11 +5,12 @@ import app.model.Employee;
 import app.repository.EmployeeRepository;
 import app.web.dto.EmployeeRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.LifecycleState;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,8 +62,16 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeByUserId(UUID userId) {
-        return employeeRepository.findByUserId(userId).orElseThrow(() -> new DomainException("Employee with id [%s] is not available".formatted(userId)));
+        return employeeRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("Employee with id [%s] is not available".formatted(userId)));
     }
 
 
+    public void deleteEmployeeById(UUID userId) {
+        log.info("Deleting employee with ID: [%s]".formatted(userId));
+        Employee employee = getEmployeeByUserId(userId);
+//        employee.setActive(false);
+//        employeeRepository.save(employee);
+        employeeRepository.delete(employee);
+
+    }
 }

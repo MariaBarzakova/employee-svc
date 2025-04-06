@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -39,4 +40,10 @@ public class EmployeeController {
                 .status(HttpStatus.OK)
                 .body(employeeResponse);
     }
+
+//    @DeleteMapping("/{userId}")
+//    public ResponseEntity<Void> deleteEmployee(@PathVariable UUID userId){
+//        employeeService.deleteEmployeeById(userId);
+//        return ResponseEntity.ok().body(null);
+//    }
 }
