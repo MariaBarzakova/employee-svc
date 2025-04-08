@@ -4,8 +4,12 @@ import app.exception.DomainException;
 import app.model.Employee;
 import app.repository.EmployeeRepository;
 import app.web.dto.EmployeeRequest;
+import app.web.dto.EmployeeResponse;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,22 +60,24 @@ public class EmployeeService {
                 .createdAt(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
                 .build();
-        System.out.println("Employee request created successfully!");
         return employeeRepository.save(newEmployee);
 
     }
 
-    public Employee getEmployeeByUserId(UUID userId) {
-        return employeeRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("Employee with id [%s] is not available".formatted(userId)));
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
     }
 
+    public Employee getEmployeeByUserId(UUID userId) {
+        return employeeRepository.findByUserId(userId)
+        .orElseThrow(() -> new EntityNotFoundException("Employee with id [%s] not found".formatted(userId)));
+    }
 
-    public void deleteEmployeeById(UUID userId) {
-        log.info("Deleting employee with ID: [%s]".formatted(userId));
+    public Employee updateStatus(UUID userId) {
         Employee employee = getEmployeeByUserId(userId);
-//        employee.setActive(false);
-//        employeeRepository.save(employee);
-        employeeRepository.delete(employee);
-
+        employee.setActive(!employee.getActive());
+        Employee saved = employeeRepository.save(employee);
+        log.info("Employee status updated");
+        return saved;
     }
 }
