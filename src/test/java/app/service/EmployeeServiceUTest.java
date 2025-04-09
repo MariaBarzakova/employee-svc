@@ -3,6 +3,7 @@ package app.service;
 import app.model.Employee;
 import app.repository.EmployeeRepository;
 import app.web.dto.EmployeeRequest;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,9 +12,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -73,8 +76,7 @@ public class EmployeeServiceUTest {
         assertEquals("AB", updatedEmployee.getUsername());
         verify(employeeRepository).save(any(Employee.class));
     }
-// when(userRepository.findByUsername(registerRequest.getUsername())).thenReturn(Optional.empty());
-//        when(userRepository.save(any())).thenReturn(user);
+
     @Test
     void testUpsertEmployee_CreateNew() {
         doReturn(Optional.empty()).when(employeeRepository).findByUserId(userId);
@@ -100,9 +102,27 @@ public class EmployeeServiceUTest {
     void testGetEmployeeByUserId_NotFound() {
         when(employeeRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(NullPointerException.class, () -> employeeService.getEmployeeByUserId(userId));
-        assertEquals("Employee with id [%s] is not available".formatted(userId), exception.getMessage());
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> employeeService.getEmployeeByUserId(userId));
+        assertEquals("Employee with id [%s] not found".formatted(userId), exception.getMessage());
     }
+
+    @Test
+    void testGetEmployeeById_EmployeeExists() {
+        when(employeeRepository.findByUserId(userId)).thenReturn(Optional.of(employee));
+
+        Employee employeeFound = employeeService.getEmployeeByUserId(userId);
+        assertNotNull(employeeFound);
+        assertEquals(employee.getUserId(), employeeFound.getUserId());
+    }
+
+    @Test
+    void testAllEmployeeInDB_AllExists() {
+        List<Employee> employeeList = List.of(new Employee(), new Employee());
+        when(employeeRepository.findAll()).thenReturn(employeeList);
+        List<Employee> employees = employeeService.getAllEmployees();
+        assertThat(employees).hasSize(2);
+    }
+
 
 }
 
